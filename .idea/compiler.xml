@@ -6,7 +6,9 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="http-client-starter" />
         <module name="mqtt" />
+        <module name="springboot" />
       </profile>
     </annotationProcessing>
   </component>

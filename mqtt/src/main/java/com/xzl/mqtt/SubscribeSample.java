@@ -8,6 +8,10 @@ package com.xzl.mqtt;
  * @history:
  */
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSONPObject;
+import com.sun.org.apache.bcel.internal.generic.NEW;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -16,6 +20,8 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
+import java.util.Date;
+
 /**
  *订阅端
  */
@@ -23,7 +29,7 @@ public class SubscribeSample {
 
     public static void main(String[] args) throws MqttException {
         String HOST = "tcp://192.168.1.185:1883";
-        String TOPIC = "mqtt/test";
+        String TOPIC = "status";
         int qos = 1;
         String clientid = "subClient";
         String userName = "admin";
@@ -54,12 +60,15 @@ public class SubscribeSample {
                         e.printStackTrace();
                     }
                 }
-
                 public void messageArrived(String topic, MqttMessage message) throws Exception {
                     System.out.println("topic:"+topic);
                     System.out.println("Qos:"+message.getQos());
-                    System.out.println("message content:"+new String(message.getPayload()));
-                    System.out.println(1/0);
+                    String s = new String(message.getPayload());
+                    System.out.println("message content:"+ s);
+                    JSONObject object = JSONObject.parseObject(s);
+                    Object timestamp = object.get("timestamp");
+                    System.out.println(new Date((Long)timestamp));
+
                 }
 
                 public void deliveryComplete(IMqttDeliveryToken token) {
@@ -69,7 +78,9 @@ public class SubscribeSample {
             });
             client.connect(options);
             //订阅消息
-            client.subscribe(TOPIC, qos);
+            String[] arr = {TOPIC,"/senscape/status/#","/senscape/detect_status/#"};
+            int[] intArr = {0,0,0};
+            client.subscribe(arr,intArr );
         } catch (Exception e) {
             e.printStackTrace();
         }
