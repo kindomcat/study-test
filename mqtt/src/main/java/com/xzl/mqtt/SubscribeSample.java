@@ -7,11 +7,7 @@ package com.xzl.mqtt;
  * @version: v0.0.1
  * @history:
  */
-
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.JSONPObject;
-import com.sun.org.apache.bcel.internal.generic.NEW;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -20,6 +16,9 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 
 /**
@@ -27,9 +26,11 @@ import java.util.Date;
  */
 public class SubscribeSample {
 
+
+
     public static void main(String[] args) throws MqttException {
         String HOST = "tcp://192.168.1.185:1883";
-        String TOPIC = "status";
+        String TOPIC = "/senscape/detect/#";
         int qos = 1;
         String clientid = "subClient";
         String userName = "admin";
@@ -49,9 +50,9 @@ public class SubscribeSample {
             options.setConnectionTimeout(10);
             // 设置会话心跳时间 单位为秒 服务器会每隔1.5*20秒的时间向客户端发送个消息判断客户端是否在线，但这个方法并没有重连的机制
             options.setKeepAliveInterval(20);
+            options.setCleanSession(false);
             // 设置回调函数
             client.setCallback(new MqttCallback() {
-
                 public void connectionLost(Throwable cause) {
                     System.out.println("connectionLost");
                     try {
@@ -65,10 +66,6 @@ public class SubscribeSample {
                     System.out.println("Qos:"+message.getQos());
                     String s = new String(message.getPayload());
                     System.out.println("message content:"+ s);
-                    JSONObject object = JSONObject.parseObject(s);
-                    Object timestamp = object.get("timestamp");
-                    System.out.println(new Date((Long)timestamp));
-
                 }
 
                 public void deliveryComplete(IMqttDeliveryToken token) {
@@ -78,8 +75,8 @@ public class SubscribeSample {
             });
             client.connect(options);
             //订阅消息
-            String[] arr = {TOPIC,"/senscape/status/#","/senscape/detect_status/#"};
-            int[] intArr = {0,0,0};
+            String[] arr = {TOPIC};
+            int[] intArr = {1};
             client.subscribe(arr,intArr );
         } catch (Exception e) {
             e.printStackTrace();

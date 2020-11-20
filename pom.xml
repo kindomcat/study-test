@@ -12,6 +12,7 @@
         <module>mqtt</module>
         <module>springboot</module>
         <module>http-client-starter</module>
+        <module>common</module>
     </modules>
 
 

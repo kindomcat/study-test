@@ -20,7 +20,7 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 public class PublishSample {
     public static void main(String[] args) {
 
-        String topic = "mqtt/test";
+        String topic = "test";
         String content = "hello 哈哈1111111111111";
         int qos = 1;
         String broker = "tcp://192.168.1.185:1883";
@@ -47,7 +47,9 @@ public class PublishSample {
             // 设置消息的服务质量
             message.setQos(qos);
             // 发布消息
-            sampleClient.publish(topic, message);
+            for (int i = 0; i <100000 ; i++) {
+                sampleClient.publish(topic, message);
+            }
             // 断开连接
             sampleClient.disconnect();
             // 关闭客户端
