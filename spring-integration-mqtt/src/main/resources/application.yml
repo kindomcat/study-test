@@ -1,0 +1,9 @@
+
+
+mqtt:
+  username: ${MQTT_USERNAME:admin}
+  password: ${MQTT_PASSWORD:Senscape}
+  urls: ${MQTT_URL:tcp://192.168.1.140:1883}
+  subTopic: /senscape/detect/#,senscape
+  qosValues: 0
+  pubTopic: senscape_sub
