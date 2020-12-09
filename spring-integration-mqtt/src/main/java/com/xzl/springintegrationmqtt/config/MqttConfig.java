@@ -4,10 +4,12 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.channel.QueueChannel;
 import org.springframework.integration.core.MessageProducer;
+import org.springframework.integration.endpoint.PollingConsumer;
 import org.springframework.integration.mqtt.core.DefaultMqttPahoClientFactory;
 import org.springframework.integration.mqtt.core.MqttPahoClientFactory;
 import org.springframework.integration.mqtt.inbound.MqttPahoMessageDrivenChannelAdapter;
@@ -15,6 +17,8 @@ import org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler;
 import org.springframework.integration.mqtt.support.DefaultPahoMessageConverter;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
+import org.springframework.messaging.PollableChannel;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.Arrays;
 
@@ -25,6 +29,19 @@ import java.util.Arrays;
  */
 @Configuration
 public class MqttConfig {
+
+
+    @Bean("mqttHandlerMessage")
+    public AsyncTaskExecutor taskExecutor() {
+        ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+        taskExecutor.setMaxPoolSize(100);
+        taskExecutor.setCorePoolSize(24);
+        taskExecutor.setThreadNamePrefix("receive-mqtt-pool");
+        // 队列大小
+        taskExecutor.setQueueCapacity(100);
+        taskExecutor.initialize();
+        return taskExecutor;
+    }
 
     /**
      * mqtt消费者使用的通道
@@ -63,34 +80,18 @@ public class MqttConfig {
     }
 
     /**
-     * mqtt生产者
-     */
-    @Bean(name = CHANNEL_NAME_OUT)
-    public MessageChannel mqttOutboundChannel1() {
-        return new DirectChannel();
-    }
-
-    /**
-     * mqtt 生产者控制器
-     */
-    @Bean
-    @ServiceActivator(inputChannel = CHANNEL_NAME_OUT)
-    public MessageHandler mqttOutbound1() {
-        MqttPahoMessageHandler messageHandler =  new MqttPahoMessageHandler(MqttAsyncClient.generateClientId(), mqttClientFactory1());
-        messageHandler.setAsync(true);
-        messageHandler.setDefaultTopic(mqttProperties.getPubTopic());
-        return messageHandler;
-    }
-
-    /**
      * mqtt消费者
      *
      * @return
      */
+/*    @Bean(name = CHANNEL_NAME_IN)
+    public QueueChannel consumerChannel() {
+        return new QueueChannel();
+    }*/
+
     @Bean(name = CHANNEL_NAME_IN)
-    public QueueChannel queueChannel() {
-        QueueChannel queueChannel = new QueueChannel();
-        return queueChannel;
+    public DirectChannel consumerChannel() {
+        return new DirectChannel();
     }
 
     /**
@@ -107,7 +108,7 @@ public class MqttConfig {
         int[] its = Arrays.stream(ints).mapToInt(Integer::valueOf).toArray();
         MqttPahoMessageDrivenChannelAdapter adapter = new MqttPahoMessageDrivenChannelAdapter(MqttAsyncClient.generateClientId(), mqttClientFactory1(), strings);
         adapter.setConverter(new DefaultPahoMessageConverter());
-        adapter.setOutputChannel(queueChannel());
+        adapter.setOutputChannel(consumerChannel());
         adapter.setRole(mqttProperties.getUrls());
         adapter.setQos(its);
         return adapter;

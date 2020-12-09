@@ -23,7 +23,7 @@ public class PublishSample {
         String topic = "test";
         String content = "hello 哈哈1111111111111";
         int qos = 1;
-        String broker = "tcp://192.168.1.185:1883";
+        String broker = "tcp://192.168.1.185:1884";
         String userName = "admin";
         String password = "Senscape";
         String clientId = "pubClient";
