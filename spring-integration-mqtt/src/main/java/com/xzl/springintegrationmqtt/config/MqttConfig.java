@@ -79,6 +79,27 @@ public class MqttConfig {
         return factory;
     }
 
+
+    /**
+     * mqtt生产者
+     */
+    @Bean(name = CHANNEL_NAME_OUT)
+    public MessageChannel mqttOutboundChannel1() {
+        return new DirectChannel();
+    }
+
+    /**
+     * mqtt 生产者控制器
+     */
+    @Bean
+    @ServiceActivator(inputChannel = CHANNEL_NAME_OUT)
+    public MessageHandler mqttOutbound1() {
+        MqttPahoMessageHandler messageHandler =  new MqttPahoMessageHandler(MqttAsyncClient.generateClientId(), mqttClientFactory1());
+        messageHandler.setAsync(true);
+        messageHandler.setDefaultTopic(mqttProperties.getPubTopic());
+        return messageHandler;
+    }
+
     /**
      * mqtt消费者
      *
@@ -90,7 +111,7 @@ public class MqttConfig {
     }*/
 
     @Bean(name = CHANNEL_NAME_IN)
-    public DirectChannel consumerChannel() {
+    public MessageChannel consumerChannel() {
         return new DirectChannel();
     }
 

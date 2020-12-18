@@ -1,0 +1,5 @@
+spring:
+  thymeleaf:
+    #这个是配置html资源目录，如果直接放在templates下不用配置
+    #prefix: classpath:/templates/view/
+    cache: false

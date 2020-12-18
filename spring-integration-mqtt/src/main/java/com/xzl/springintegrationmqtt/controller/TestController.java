@@ -1,6 +1,8 @@
 package com.xzl.springintegrationmqtt.controller;
 
+import com.xzl.springintegrationmqtt.service.IMqttSendService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
@@ -23,23 +25,13 @@ import java.util.Map;
  */
 @RestController
 @Slf4j
-public class TestController extends BasicErrorController {
+public class TestController {
 
+    @Autowired
+    private IMqttSendService mqttSendService;
 
-    // 最终使用的是此构造函数，所以魔方着只需要使用它即可
-    // return new BasicErrorController(errorAttributes, this.serverProperties.getError(), this.errorViewResolvers);
-    public TestController(ErrorAttributes errorAttributes, ServerProperties serverProperties) {
-        super(errorAttributes, serverProperties.getError());
-    }
-
-    @RequestMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Map<String, Object>> errorJson(HttpServletRequest request) {
-        HttpStatus status = getStatus(request);
-        if (status == HttpStatus.NO_CONTENT) {
-            return new ResponseEntity<>(status);
-        }
-        Map<String, Object> body = getErrorAttributes(request, isIncludeStackTrace(request, MediaType.ALL));
-        body.put("myErrorType", "this is my diy error");
-        return new ResponseEntity<>(body, status);
+    @GetMapping("/test")
+    public void test(){
+        mqttSendService.sendToMqtt("1111");
     }
 }

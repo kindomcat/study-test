@@ -1,0 +1,35 @@
+
+spring:
+  # datasource config
+  datasource:
+    driver-class-name: com.taosdata.jdbc.TSDBDriver
+    url: jdbc:TAOS://192.168.1.185:6030/log
+    username: root
+    password: taosdata
+    # max wait time for get connection, ms
+    druid:
+      initial-size: 5
+      min-idle: 5
+      max-active: 5
+      max-wait: 60000
+      validation-query: select server_status();
+      validation-query-timeout: 5000
+      test-on-borrow: false
+      test-on-return: false
+      test-while-idle: true
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 60000
+      max-evictable-idle-time-millis: 900000
+
+  # mybatis
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+
+  # log
+logging:
+  level:
+    com:
+      taosdata:
+        jdbc:
+          springbootdemo:
+            dao: debug

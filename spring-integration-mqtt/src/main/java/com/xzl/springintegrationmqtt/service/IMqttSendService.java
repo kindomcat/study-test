@@ -9,7 +9,7 @@ import org.springframework.messaging.handler.annotation.Header;
  * mqtt消息发送者
  * @author tonyp
  */
-//@MessagingGateway(defaultRequestChannel = MqttConfig.CHANNEL_NAME_OUT)
+@MessagingGateway(defaultRequestChannel = MqttConfig.CHANNEL_NAME_OUT)
 public interface IMqttSendService {
     /**
      * 发送信息到MQTT服务器

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<meta http-equiv="Expires" content="0">
+<meta http-equiv="Last-Modified" content="0">
+<meta http-equiv="Cache-Control" content="no-cache, mustrevalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<link rel="stylesheet" href="./css/bootstrap.min.css">
+<script type="text/javascript" src="../js/jquery-3.4.1.min.js"></script>
+<script src="./js/bootstrap.min.js"></script>
+<script src="./js/adapter-latest.js"></script>
+
+<h2 align=center>
+    Play Stream
+</h2>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <input  id="localSessionDescription" readonly="true">
+            <input  id="remoteSessionDescription">
+            <div id="remoteVideos"></div>
+            <button onclick="startSession()"> Start Session </button>
+            <div id="div"></div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="./js/app.js"></script>
+</html>
